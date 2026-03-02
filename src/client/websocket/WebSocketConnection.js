@@ -276,7 +276,7 @@ class WebSocketConnection extends EventEmitter {
             "Accept-Language": "en-US",
             "Pragma": "no-cache"
           },
-          agent // fait par cette pute de Kisakay
+          agent
         });
 
       } else if (potential_proxy.startsWith("http://")) {

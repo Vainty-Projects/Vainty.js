@@ -220,7 +220,7 @@ const Endpoints = exports.Endpoints = {
   },
   channels: '/channels',
   Channel: channelID => {
-    if (!channelID) throw new TypeError('Channel ID must not be null or undefined');
+    if (!channelID) return '/channels/@me';
     if (channelID.id) channelID = channelID.id;
     const base = `/channels/${channelID}`;
     return {

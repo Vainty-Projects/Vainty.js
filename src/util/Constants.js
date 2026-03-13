@@ -69,21 +69,21 @@ exports.DefaultOptions = {
    */
   ws: {
     capabilities: 0, // https://discord-userdoccers.vercel.app/topics/gateway#gateway-capabilities
-    large_threshold: 250,
+    //large_threshold: 250,
     compress: true,
     properties: {
       os: 'Windows',
       browser: 'Discord Client',
       release_channel: 'stable',
-      client_version: '1.0.9215',
+      client_version: '1.0.9185',
       os_version: '10.0.19045',
       os_arch: 'x64',
       app_arch: 'x64',
       system_locale: 'en-US',
-      browser_user_agent: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9154 Chrome/124.0.6367.243 Electron/30.1.0 Safari/537.36`,
-      browser_version: '30.1.0',
-      client_build_number: 77438,
-      native_build_number: 470042,
+      browser_user_agent: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9185 Chrome/130.0.6723.191 Electron/33.4.0 Safari/537.36`,
+      browser_version: '33.4.0',
+      client_build_number: 375609,
+      native_build_number: 59498,
       client_event_source: null,
     },
     presence: {

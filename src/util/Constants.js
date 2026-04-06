@@ -149,6 +149,7 @@ const Endpoints = exports.Endpoints = {
       settings: `${base}/settings`,
       settingsProto: type => `${base}/settings-proto/${type}`,
       pomeloattempt: `${base}/pomelo-attempt`,
+      clan: `${base}/clan`,
       Relationship: uID => `${base}/relationships/${uID}`,
       boosts: `${base}/guilds/premium/subscription-slots`,
       Guild: guildID => ({

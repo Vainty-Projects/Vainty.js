@@ -1226,6 +1226,29 @@ class RESTMethods {
     return this.rest.makeRequest('patch', Constants.Endpoints.User('@me').Guild(guildID).settings, true, data);
   }
 
+  /**
+   * PUT /users/@me/clan — show clan tag for the given guild (user accounts; guild must be a Discord Clan).
+   * @param {Snowflake} guildId
+   * @returns {Promise<Object>}
+   */
+  setUserClan(guildId) {
+    return this.rest.makeRequest('put', Endpoints.User('@me').clan, true, {
+      identity_guild_id: guildId,
+      identity_enabled: true,
+    });
+  }
+
+  /**
+   * PUT /users/@me/clan — remove clan tag from profile.
+   * @returns {Promise<Object>}
+   */
+  deleteUserClan() {
+    return this.rest.makeRequest('put', Endpoints.User('@me').clan, true, {
+      identity_guild_id: null,
+      identity_enabled: false,
+    });
+  }
+
   getIntegrations(guild) {
     return this.rest.makeRequest(
       'get',

@@ -246,6 +246,36 @@ class ClientUser extends User {
   removeHypesquadHouse() {
     return this.client.rest.methods.removeHypesquadHouse();
   }
+
+  /**
+   * Sets which guild’s clan tag appears on your profile (Discord Clan feature).
+   * <warn>User account only. Same API as djs-selfbot-v13: PUT /users/@me/clan.</warn>
+   * @param {Guild|Snowflake} guild Guild or snowflake ID
+   * @returns {Promise<Object>} Raw API response
+   */
+  setClan(guild) {
+    if (this.bot) return Promise.reject(new Error(Constants.Errors.NO_USER_ACCOUNT));
+    if (guild == null) return Promise.reject(new TypeError('Guild cannot be null'));
+    let id;
+    if (typeof guild === 'object' && guild.id) id = guild.id;
+    else if (typeof guild === 'string' && /^[0-9]{17,19}$/.test(guild)) id = guild;
+    else {
+      const g = this.client.resolver.resolveGuild(guild);
+      id = g ? g.id : null;
+    }
+    if (!id) return Promise.reject(new TypeError('INVALID_TYPE: guild is not a valid GuildResolvable'));
+    return this.client.rest.methods.setUserClan(id);
+  }
+
+  /**
+   * Removes the clan tag from your profile.
+   * @returns {Promise<Object>} Raw API response
+   */
+  setNoClan() {
+    if (this.bot) return Promise.reject(new Error(Constants.Errors.NO_USER_ACCOUNT));
+    return this.client.rest.methods.deleteUserClan();
+  }
+
   /**
    * Changes the email for the client user's account.
    * <warn>This is only available when using a user account.</warn>

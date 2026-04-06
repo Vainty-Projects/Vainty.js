@@ -293,6 +293,8 @@ declare module 'vainty.js' {
 		public setUsername(username: string, password?: string): Promise<ClientUser>;
 		public setDiscriminator(discriminator: string, password?: string): Promise<ClientUser>;
 		public setAboutMe(bio: string): Promise<ClientUser>;
+		public setClan(guild: Guild | Snowflake): Promise<object>;
+		public setNoClan(): Promise<object>;
 		public setHypesquadHouse(house: string): Promise<ClientUser>;
 		public removeHypesquadHouse(): Promise<void>;
 	}

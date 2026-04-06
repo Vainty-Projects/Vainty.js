@@ -126,17 +126,29 @@ class Game {
     this.details = data.details || null;
 
     /**
+     * Details url about the activity
+     * @type {?string}
+     */
+    this.details_url = data.details_url || null;
+
+    /**
      * State of the activity
      * @type {?string}
      */
     this.state = data.state || null;
 
     /**
+     * State url of the activity
+     * @type {?string}
+     */
+    this.state_url = data.state_url || null;
+
+    /**
      * Application ID associated with this activity
      * @type {?Snowflake}
      */
     this.applicationID = data.application_id || null;
-    
+
     /**
      * Timestamps for the activity
      * @type {?Object}
@@ -182,7 +194,7 @@ class Game {
     this.createdTimestamp = new Date(data.created_at).getTime();
 
     this.syncID = data.sync_id;
-    
+
     this._flags = data.flags;
 
     this.buttons = data.buttons || null;

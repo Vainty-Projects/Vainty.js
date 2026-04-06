@@ -1241,12 +1241,14 @@ declare module 'vainty.js' {
 		public assets: RichPresenceAssets | null;
 		public buttons: string[];
 		public details: string | null;
+		public details_url: string | null;
+		public state: string | null;
+		public state_url: string | null;
 		public name: string;
 		public party: {
 			id: string | null;
 			size: [number, number];
 		} | null;
-		public state: string | null;
 		public timestamps: {
 			start: Date | null;
 			end: Date | null;
@@ -1263,7 +1265,9 @@ declare module 'vainty.js' {
 		public setType(type?: ActivityType): this;
 		public setApplicationId(id?: Snowflake): this;
 		public setDetails(details?: string): this;
+		public setDetailsURL(url?: string): this;
 		public setState(state?: string): this;
+		public setStateURL(url?: string): this;
 		public setParty(party?: { size: [number, number]; id?: string }): this;
 		public setStartTimestamp(timestamp?: Date): this;
 		public setEndTimestamp(timestamp?: Date): this;
@@ -1287,6 +1291,7 @@ declare module 'vainty.js' {
 		public assets: RichPresenceAssets | null;
 		public buttons: string[];
 		public details: string | null;
+		public state: string | null;
 		public name: string;
 		public sync_id: string;
 		public id: string;
@@ -1302,7 +1307,6 @@ declare module 'vainty.js' {
 			id: string | null;
 			size: [number, number];
 		} | null;
-		public state: string | null;
 		public timestamps: {
 			start: Date | null;
 			end: Date | null;

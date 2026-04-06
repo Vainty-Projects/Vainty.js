@@ -183,6 +183,16 @@ class RichPresence {
          */
         this.details = null;
         /**
+         * URL opened when details are used as a link (client-specific; often needs STREAMING + stream url)
+         * @type {?string}
+         */
+        this.details_url = null;
+        /**
+         * State url of the activity (same caveats as details_url)
+         * @type {?string}
+         */
+        this.state_url = null;
+        /**
          * Party of the activity
          * @type {?ActivityParty}
          */
@@ -219,6 +229,8 @@ class RichPresence {
         this.url = data.url;
         this.state = data.state;
         this.details = data.details;
+        this.details_url = data.details_url ?? null;
+        this.state_url = data.state_url ?? null;
         this.party = data.party;
         this.timestamps = data.timestamps;
         this.created_at = data.created_at;
@@ -336,6 +348,24 @@ class RichPresence {
      */
     setDetails(details) {
         this.details = details;
+        return this;
+    }
+    /**
+     * @param {?string} url URL for clickable details (Gateway: details_url)
+     * @returns {RichPresence}
+     */
+    setDetailsURL(url) {
+        if (typeof url === 'string' && !checkUrl(url)) throw new Error('Details URL must be a valid URL');
+        this.details_url = typeof url === 'string' ? url : null;
+        return this;
+    }
+    /**
+     * @param {?string} url URL for clickable state (Gateway: state_url)
+     * @returns {RichPresence}
+     */
+    setStateURL(url) {
+        if (typeof url === 'string' && !checkUrl(url)) throw new Error('State URL must be a valid URL');
+        this.state_url = typeof url === 'string' ? url : null;
         return this;
     }
     /**
@@ -467,6 +497,8 @@ class RichPresence {
             url: this.url,
             state: this.state,
             details: this.details,
+            details_url: this.details_url,
+            state_url: this.state_url,
             party: this.party,
             timestamps: this.timestamps,
             secrets: this.secrets,
@@ -525,6 +557,8 @@ class RichPresence {
                 url: this.url,
                 state: this.state,
                 details: this.details,
+                details_url: this.details_url,
+                state_url: this.state_url,
                 party: this.party,
                 timestamps: this.timestamps,
                 secrets: this.secrets,

@@ -2,7 +2,7 @@
   "author": {
     "name": "xpsvn"
   },
-  "version": "0.0.7",
+  "version": "0.0.8",
   "browser": {
     "ws": false,
     "uws": false,

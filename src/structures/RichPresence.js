@@ -595,70 +595,31 @@ class SpotifyRPC extends RichPresence {
      */
 
     setup(options) {
-
         this.name = 'Spotify';
-
         this.type = 2;
-
         this.details = options.details;
-
-        this.state = options.state;
-
+        const s = options.state;
+        this.state = Array.isArray(s) ? s.join('; ') : (s ? String(s).trim() : null);
         this.assets = options.assets;
-
         this.metadata = options.metadata;
-
         this.buttons = options.buttons;
-
         this.timestamps = options.timestamps;
-
-
-        this.party = {
-            id: `spotify:${this.client.user?.id}`,
-        };
-
-        /**
-         * The Spotify song's id
-         * @type {?string}
-         */
-
+        this.party = { id: `spotify:${this.client.user?.id}` };
         this.sync_id = options.sync_id;
-
-        /**
-         * The activity's id
-         * @type {string}
-         */
-
         this.id = 'spotify:1';
-
-        /**
-         * Creation date of the activity
-         * @type {number}
-         */
-
         this.created_at = Date.now();
-
-        /**
-         * Flags that describe the activity
-         * @type {ActivityFlags}
-         */
-
-        this.flags = 48; // Sync + Play (ActivityFlags)
-
-        /**
-         * The game's or Spotify session's id
-         * @type {?string}
-         */
-
+        this.flags = 48;
         this.session_id = this.client.ws?.connection?.sessionID;
-
-
-
         this.secrets = {
             join: crypto.randomBytes(20).toString('hex'),
             spectate: crypto.randomBytes(20).toString('hex'),
             match: crypto.randomBytes(20).toString('hex'),
         };
+    }
+
+    setState(state) {
+        this.state = Array.isArray(state) ? state.join('; ') : (state ? String(state).trim() : null);
+        return this;
     }
 
     /**

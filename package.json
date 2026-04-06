@@ -2,7 +2,7 @@
   "author": {
     "name": "xpsvn"
   },
-  "version": "0.0.6",
+  "version": "0.0.7",
   "browser": {
     "ws": false,
     "uws": false,
@@ -41,7 +41,6 @@
   "bundleDependencies": [],
   "dependencies": {
     "fetch-cookie": "2.1.0",
-    "ffi-napi": "^4.0.3",
     "form-data": "^4.0.2",
     "https-proxy-agent": "^7.0.6",
     "json-bigint": "^1.0.0",

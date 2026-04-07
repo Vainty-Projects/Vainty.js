@@ -490,15 +490,13 @@ class RichPresence {
      * @returns {RichPresence}
      */
     toJSON() {
-        return {
+        let obj = {
             name: this.name,
             type: this.type ?? 0,
             application_id: this.application_id,
             url: this.url,
             state: this.state,
             details: this.details,
-            details_url: this.details_url,
-            state_url: this.state_url,
             party: this.party,
             timestamps: this.timestamps,
             secrets: this.secrets,
@@ -509,6 +507,9 @@ class RichPresence {
             platform: this.platform,
             session_id: this.session_id
         };
+        if (this.details_url) obj.details_url = this.details_url;
+        if (this.state_url) obj.state_url = this.state_url;
+        return obj;
     }
     /**
    * @typedef {Object} ExternalAssets
@@ -549,27 +550,26 @@ class RichPresence {
      * @returns {RichPresence}
      */
     toDiscord() {
-        return {
-            game: {
-                name: this.name,
-                type: this.type ?? 0,
-                application_id: this.application_id,
-                url: this.url,
-                state: this.state,
-                details: this.details,
-                details_url: this.details_url,
-                state_url: this.state_url,
-                party: this.party,
-                timestamps: this.timestamps,
-                secrets: this.secrets,
-                assets: this.assets,
-                buttons: this.buttons,
-                metadata: this.metadata,
-                flags: this.flags,
-                platform: this.platform,
-                session_id: this.session_id,
-            }
-        }
+        const game = {
+            name: this.name,
+            type: this.type ?? 0,
+            application_id: this.application_id,
+            url: this.url,
+            state: this.state,
+            details: this.details,
+            party: this.party,
+            timestamps: this.timestamps,
+            secrets: this.secrets,
+            assets: this.assets,
+            buttons: this.buttons,
+            metadata: this.metadata,
+            flags: this.flags,
+            platform: this.platform,
+            session_id: this.session_id,
+        };
+        if (this.details_url) game.details_url = this.details_url;
+        if (this.state_url) game.state_url = this.state_url;
+        return { game };
     }
 }
 

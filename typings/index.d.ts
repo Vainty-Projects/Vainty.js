@@ -1980,7 +1980,7 @@ declare module 'vainty.js' {
 	type RelationshipType = 'NONE' | 'FRIEND' | 'BLOCKED' | 'PENDING_INCOMING' | 'PENDING_OUTGOING' | 'IMPLICIT';
 
 
-	type ActivityPlatform = 'desktop' | 'samsung' | 'xbox' | 'ios' | 'android' | 'embedded' | 'ps4' | 'ps5';
+	type ActivityPlatform = 'desktop' | 'samsung' | 'xbox' | 'ios' | 'android' | 'embedded' | 'ps4' | 'ps5' | 'meta_quest';
 
 	type AddGuildMemberOptions = {
 		accessToken: String;

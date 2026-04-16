@@ -3,8 +3,9 @@ const EventEmitter = require('events');
 const Constants = require('../../util/Constants');
 const zlib = require('zlib');
 const PacketManager = require('./packets/WebSocketPacketManager');
-const { SocksProxyAgent } = require('socks-proxy-agent');
-const { HttpsProxyAgent } = require('https-proxy-agent');
+const { WSCodes } = require('../../util/Constants');
+const UNRECOVERABLE_CLOSE_CODES = Object.keys(WSCodes).slice(1).map(Number);
+const UNRESUMABLE_CLOSE_CODES = [1000, 4006, 4007];
 const erlpack = (function findErlpack() {
   try {
     const e = require('erlpack');
@@ -259,47 +260,16 @@ class WebSocketConnection extends EventEmitter {
     this.expectingClose = false;
     this.gateway = gateway;
     this.debug(`Connecting to ${gateway}`);
-
-    let ws;
-    let potential_proxy = this.client.options?.proxy;
-
-    if (potential_proxy && this.client.options?.websocket_proxied) {
-      if ((potential_proxy).startsWith("socks5://")) {
-        const agent = new SocksProxyAgent(potential_proxy);
-        ws = this.ws = new WebSocket(gateway, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9154 Chrome/124.0.6367.243 Electron/30.1.0 Safari/537.36",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "en-US",
-            "Pragma": "no-cache"
-          },
-          agent
-        });
-
-      } else if (potential_proxy.startsWith("http://")) {
-        const agent = new HttpsProxyAgent(potential_proxy);
-
-        ws = this.ws = new WebSocket(gateway, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9154 Chrome/124.0.6367.243 Electron/30.1.0 Safari/537.36",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "en-US",
-            "Pragma": "no-cache"
-          },
-          agent
-        });
+    const ws = this.ws = new WebSocket(gateway, {
+      handshakeTimeout: 30000,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9185 Chrome/130.0.6723.191 Electron/33.4.0 Safari/537.36",
+        "X-Super-Properties": "eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwic3lzdGVtX2xvY2FsZSI6ImZyLUZSIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNi4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTM2LjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIn0=",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US",
+        "Pragma": "no-cache"
       }
-    } else {
-      ws = this.ws = new WebSocket(gateway, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9154 Chrome/124.0.6367.243 Electron/30.1.0 Safari/537.36",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Accept-Language": "en-US",
-          "Pragma": "no-cache"
-        }
-      });
-    }
-
+    });
     if (browser) ws.binaryType = 'arraybuffer';
     ws.onmessage = this.onMessage.bind(this);
     ws.onopen = this.onOpen.bind(this);
@@ -386,8 +356,7 @@ class WebSocketConnection extends EventEmitter {
         return this.heartbeat(packet.d.heartbeat_interval);
       case Constants.OPCodes.RECONNECT:
         this.debug('Discord asked us to Reconnect');
-        this.destroyReconnect();
-        return this.reconnect();
+        return this.destroyReconnect();
       case Constants.OPCodes.INVALID_SESSION:
         if (!packet.d) this.sessionID = null;
         this.sequence = -1;
@@ -418,13 +387,13 @@ class WebSocketConnection extends EventEmitter {
   reconnect() {
 
     const gateway = this.gateway;
-    this.debug('Attemping to reconnect in 5500ms...');
+    this.debug('Attemping to reconnect in 1000ms...');
     /**
      * Emitted whenever the client tries to reconnect to the WebSocket.
      * @event Client#reconnecting
      */
     this.client.emit(Constants.Events.RECONNECTING);
-    this.connect(gateway, 5500, true);
+    this.connect(gateway, 1000, true);
   }
 
   /**
@@ -433,7 +402,7 @@ class WebSocketConnection extends EventEmitter {
    */
   onError(error) {
     if (error && error.message === 'uWs client connection error') {
-      this.reconnect();
+      //this.reconnect();
       return;
     }
     /**
@@ -469,7 +438,6 @@ class WebSocketConnection extends EventEmitter {
        */
       this.client.emit(Constants.Events.DISCONNECT, event);
       this.debug(Constants.WSCodes[event.code]);
-      this.destroy();
       return;
     }
     this.expectingClose = false;
@@ -491,15 +459,14 @@ class WebSocketConnection extends EventEmitter {
    * If no value is given, a heartbeat will be sent instantly
    */
   heartbeat(time) {
-    if (!isNaN(time)) {
-      if (time === -1) {
-        this.debug('Clearing heartbeat interval');
-        this.client.clearInterval(this.heartbeatInterval);
-        this.heartbeatInterval = null;
-      } else {
-        this.debug(`Setting a heartbeat interval for ${time}ms`);
-        this.heartbeatInterval = this.client.setInterval(() => this.heartbeat(), time);
-      }
+    if (time === -1) {
+      this.debug('Clearing heartbeat interval');
+      this.client.clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+      return;
+    } else if (!this.heartbeatInterval) {
+      this.debug(`Setting a heartbeat interval for ${time}ms`);
+      this.heartbeatInterval = this.client.setInterval(() => this.heartbeat(), time);
       return;
     }
     this.debug('Sending a heartbeat');
